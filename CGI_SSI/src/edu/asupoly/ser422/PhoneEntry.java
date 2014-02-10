@@ -1,4 +1,4 @@
-package edu.asupoly.cst425;
+package edu.asupoly.ser422;
 
 public class PhoneEntry {
     private String firstname;
