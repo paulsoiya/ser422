@@ -1,4 +1,4 @@
-package edu.asupoly.ser422.phoneservlet;
+package edu.asupoly.ser422.phone;
 
 public class PhoneEntry {
     private String firstname;

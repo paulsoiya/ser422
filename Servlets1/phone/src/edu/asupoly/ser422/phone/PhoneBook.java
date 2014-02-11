@@ -1,4 +1,4 @@
-package edu.asupoly.ser422.phoneservlet;
+package edu.asupoly.ser422.phone;
 
 import java.io.*;
 import java.util.*;
