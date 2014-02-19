@@ -1,0 +1,81 @@
+/**
+ * 
+ */
+package edu.asupoly.cst425.calc;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author kevinagary
+ *
+ */
+@SuppressWarnings("serial")
+public class PrintServlet extends HttpServlet {
+
+	public void doGet(HttpServletRequest req, HttpServletResponse res)
+		throws ServletException, IOException	    {
+		
+		res.setStatus(HttpServletResponse.SC_OK);
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter();
+		try {
+			out.println("<HTML><HEAD><TITLE>CST425 Simple Calculator Print</TITLE></HEAD><BODY>");
+			VariableStore store = VariableStore.getVariableStore();
+			synchronized (store) {
+				out.println(store.printVariables(req.getRequestURI()));
+			}
+			out.println("<br/>Return to the <a href=\"" + req.getServletContext().getContextPath()); 
+			out.println("\">landing page</a>\n</BODY></HTML>");
+		} finally {
+			out.close();	
+		}
+	}
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException	    {
+		// Now we are just getting cute. Instead of creating a Clear link like the spec
+		// said, I am deviating to show how you can use both methods to provide distinct
+		// functionality. This is actually a bad design idea, as like any object, a servlet
+		// should have a single, well-defined responsibility.
+		res.setContentType("text/html");
+		PrintWriter out = res.getWriter();
+		VariableStore store = VariableStore.getVariableStore();
+		
+		try {
+			String var = req.getParameter("var");
+			if (var == null || var.trim().length() == 0) {
+				res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				out.println("<HTML><HEAD><TITLE>CST425 Simple Calculator Clear</TITLE></HEAD><BODY>");
+				out.println("Invalid request format");
+				out.println("</BODY></HTML>");
+			} else {
+				Integer value = null;
+				synchronized (store) {
+					value = store.retrieveByVarName(var);
+					if (value == null) {
+						res.setStatus(HttpServletResponse.SC_OK);
+						out.println("<HTML><HEAD><TITLE>CST425 Simple Calculator Clear</TITLE></HEAD><BODY>");
+						out.println("No such stored variable " + var);
+						out.println("</BODY></HTML>");
+					}
+					else {
+						store.clear(var);
+						res.setStatus(HttpServletResponse.SC_OK);
+						out.println("<HTML><HEAD><TITLE>CST425 Simple Calculator Clear</TITLE></HEAD><BODY>");
+						out.println("Variable " + var + " cleared");
+						out.println("<br/>Return to the <a href=\"" + req.getServletContext().getContextPath()); 
+						out.println("\">landing page</a>\n</BODY></HTML>");
+					}
+				}
+			}
+		} finally {
+			out.close();	
+		}
+	}
+}

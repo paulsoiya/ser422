@@ -1,6 +1,7 @@
 # build artifacts
 *.class
-*/build/*
+**/build
+**/classes
 
 # Package Files #
 *.jar
